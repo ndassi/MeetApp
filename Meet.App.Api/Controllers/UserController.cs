@@ -28,9 +28,9 @@ namespace Meet.App.Api.Controllers
 
         [HttpGet("{id}")]
 
-        public ActionResult<AppUser?> GetUsers(int id){
+        public async Task<ActionResult<AppUser?>> GetUsers(int id){
             
-            var user = _dataContext.Users.FirstOrDefault(x=> x.Id == id);
+            var user = await _dataContext.Users.FirstOrDefaultAsync(x=> x.Id == id);
             return user;
         }
 
