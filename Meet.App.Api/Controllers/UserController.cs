@@ -1,24 +1,27 @@
 using System;
 using Meet.App.Api.Data;
 using Meet.App.Api.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Meet.App.Api.Controllers
 {
+    
     [ApiController]
     [Route("api/[controller]")]
 
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
         private readonly DataContext _dataContext;
 
-        public UserController(DataContext dataContext)
+        public UserController(DataContext dataContext) : base(dataContext)
         {
             this._dataContext = dataContext;
         }
 
         [HttpGet]
+
 
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(){
             

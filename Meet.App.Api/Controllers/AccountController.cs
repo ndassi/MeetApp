@@ -2,21 +2,30 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using Meet.App.Api.Data;
+using Meet.App.Api.Dtos;
 using Meet.App.Api.Entities;
+using Meet.App.Api.Interfaces;
+using Meet.App.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Meet.App.Api.Controllers;
+
+[AllowAnonymous]
 public class AccountController : BaseApiController
 {
-    public AccountController(DataContext dbContext) : base(dbContext)
+    public ITokenService _tokenService { get; }
+
+    public AccountController(DataContext dbContext, ITokenService tokenService) : base(dbContext)
     {
-        
+        _tokenService = tokenService;
     }
 
     [HttpPost("account/register")]
-    public ActionResult<AppUser> Register(string username, string password){
-        if (UserExist(username)) return BadRequest("Bad request");
+    public async Task<ActionResult<UserDto>> Register(string username, string password){
+        if (await UserExist(username)) return BadRequest("Bad request");
 
         var hmac = new  HMACSHA512();
         
@@ -27,16 +36,16 @@ public class AccountController : BaseApiController
         };  
 
         dbContext.Add(user);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
 
-        return user;
+        return new UserDto{UserName = user.UserName, CredentialToken = _tokenService.CreateToken(user)};
 
     }
 
     [HttpGet("account/login")]
-     public ActionResult<AppUser> Login(string username, string password){
+     public async Task<ActionResult<UserDto>> Login(string username, string password){
 
-        AppUser? user = dbContext.Users.FirstOrDefault(x=>x.UserName == username); 
+        AppUser? user =  await dbContext.Users.FirstOrDefaultAsync(x=>x.UserName == username); 
 
         if ( user is null ) return BadRequest("Bad request");
 
@@ -46,12 +55,13 @@ public class AccountController : BaseApiController
             Encoding.UTF8.GetString(hmac.ComputeHash(Encoding.UTF8.GetBytes(password)))) 
          return Unauthorized("Wrong Password");
 
-        return user;
+        return new UserDto{UserName = user.UserName, CredentialToken = _tokenService.CreateToken(user)};
 
     }
 
-    private bool UserExist(string username)
+    private async Task<bool> UserExist(string username)
     {
-        return dbContext.Users.Any(u => u.UserName.ToLower() == username.ToLower());
+        return await dbContext.Users.AnyAsync(u => u.UserName.ToLower() == username.ToLower());
     }
 }
+
