@@ -5,12 +5,13 @@ import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from "./nav-bar/nav-bar.component";
 import { BaseComponentComponent } from './base-component/base-component.component';
 import { NavLoggedInComponent } from "./Components/nav-logged-in/nav-logged-in.component";
+import { HomeComponent } from "./home/home.component";
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, NavBarComponent, NavLoggedInComponent],
+  imports: [RouterOutlet, CommonModule, NavBarComponent, NavLoggedInComponent, HomeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

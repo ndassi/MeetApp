@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { LoginDto } from '../_models/loginDto';
 import { AccountService } from '../_Service/account.service';
 import { HttpClient } from '@angular/common/http';
+import { RegisterDto } from '../_models/registerDto';
 
 @Component({
   selector: 'app-base-component',
@@ -15,6 +16,7 @@ export class BaseComponentComponent  implements OnInit{
   http = inject(HttpClient);
   
   users :any;
+  
 
   isLogged:boolean = false;
   
@@ -47,4 +49,7 @@ export class BaseComponentComponent  implements OnInit{
       complete: ()=>{console.log("Request done")}
      })
   }
+
+
+  
 }

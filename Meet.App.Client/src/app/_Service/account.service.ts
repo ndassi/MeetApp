@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../_models/user';
 import { map } from 'rxjs';
+import { RegisterDto } from '../_models/registerDto';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +28,10 @@ export class AccountService {
     this.currentUser.set(null);
     console.log("user logout");
   
+    
+  }
+
+  register(user:RegisterDto){
+   // return this.http.post<User>(this.baseUrl+"register", user);
   }
 }
