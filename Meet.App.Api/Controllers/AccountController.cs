@@ -23,7 +23,7 @@ public class AccountController : BaseApiController
         _tokenService = tokenService;
     }
 
-    [HttpPost("account/register")]
+    [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(string username, string password){
         if (await UserExist(username)) return BadRequest("Bad request");
 
@@ -42,17 +42,17 @@ public class AccountController : BaseApiController
 
     }
 
-    [HttpGet("account/login")]
-     public async Task<ActionResult<UserDto>> Login(string username, string password){
+    [HttpPost("login")]
+     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto){
 
-        AppUser? user =  await dbContext.Users.FirstOrDefaultAsync(x=>x.UserName == username); 
+        AppUser? user =  await dbContext.Users.FirstOrDefaultAsync(x=>x.UserName == loginDto.UserName); 
 
         if ( user is null ) return BadRequest("Bad request");
 
         var hmac = new  HMACSHA512(user.PasswordSalt);
 
         if (Encoding.UTF8.GetString(user.PasswordHash) != 
-            Encoding.UTF8.GetString(hmac.ComputeHash(Encoding.UTF8.GetBytes(password)))) 
+            Encoding.UTF8.GetString(hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password)))) 
          return Unauthorized("Wrong Password");
 
         return new UserDto{UserName = user.UserName, CredentialToken = _tokenService.CreateToken(user)};
