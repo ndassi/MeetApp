@@ -31,7 +31,12 @@ export class AccountService {
     
   }
 
-  register(user:RegisterDto){
-   // return this.http.post<User>(this.baseUrl+"register", user);
+  register(md:any){
+   return this.http.post<User>(this.baseUrl+"register", md).pipe(
+    map(user=> {
+      localStorage.setItem("user", JSON.stringify(user));
+      this.currentUser.set(user);
+      return user;
+    }));
   }
 }

@@ -1,5 +1,9 @@
 
-  <app-nav-bar></app-nav-bar>
+  <app-nav-bar [isLogged]="isLogged" (Logged)="registered($event)"></app-nav-bar>
 
-  <app-home></app-home>
+  <section class="py-5 text-center container">
+    <router-outlet></router-outlet>
+  </section>
+
+  <!-- <app-home [isLogged]="isLogged" (registeredDone)="registered($event)"></app-home> -->
 

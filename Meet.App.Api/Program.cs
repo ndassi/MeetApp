@@ -1,6 +1,7 @@
 using System.Text;
 using Meet.App.Api.Data;
 using Meet.App.Api.Interfaces;
+using Meet.App.Api.Middleware;
 using Meet.App.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseMiddleware<ExceptionMiddleware>();
     app.UseCors("CorsPolicy");
     app.UseSwagger();
     app.UseSwaggerUI();

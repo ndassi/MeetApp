@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, input, OnInit } from '@angular/core';
 import { LoginDto } from '../_models/loginDto';
 import { AccountService } from '../_Service/account.service';
 import { HttpClient } from '@angular/common/http';
@@ -17,27 +17,9 @@ export class BaseComponentComponent  implements OnInit{
   
   users :any;
   
-
-  isLogged:boolean = false;
+  @Input() isLogged:boolean =false;
   
-  login(user:any){
-    var loginDto = user.value;
-    this.accountService.login(loginDto).subscribe(
-      {
-        next : response =>{
-          this.isLogged = this.accountService.currentUser() != null;
-          console.log(response);
-        },
-        error: err => console.log(err)
-      }
-    );
-
-  }
-
-  logout(){
-    this.accountService.logout();
-    this.isLogged = this.accountService.currentUser() != null;
-  }
+  
 
   ngOnInit(): void {
     

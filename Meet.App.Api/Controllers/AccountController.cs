@@ -24,14 +24,14 @@ public class AccountController : BaseApiController
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserDto>> Register(string username, string password){
-        if (await UserExist(username)) return BadRequest("Bad request");
+    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto){
+        if (await UserExist(registerDto.UserName)) return BadRequest("User Already Exist");
 
         var hmac = new  HMACSHA512();
         
         AppUser user = new AppUser{
-            UserName = username, 
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+            UserName = registerDto.UserName, 
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key
         };  
 
@@ -45,9 +45,11 @@ public class AccountController : BaseApiController
     [HttpPost("login")]
      public async Task<ActionResult<UserDto>> Login(LoginDto loginDto){
 
+        if(loginDto.isEmpty()) return BadRequest("UserName or Password Error");
+
         AppUser? user =  await dbContext.Users.FirstOrDefaultAsync(x=>x.UserName == loginDto.UserName); 
 
-        if ( user is null ) return BadRequest("Bad request");
+        if ( user is null ) return BadRequest("User Already Exist");
 
         var hmac = new  HMACSHA512(user.PasswordSalt);
 

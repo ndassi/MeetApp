@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RegisterDto } from '../_models/registerDto';
 import { BaseComponentComponent } from '../base-component/base-component.component';
+import { AccountService } from '../_Service/account.service';
 
 @Component({
   selector: 'app-register-form',
@@ -12,6 +13,10 @@ import { BaseComponentComponent } from '../base-component/base-component.compone
 })
 export class RegisterFormComponent {
 
+  accountService = inject(AccountService);
+  registered = output<boolean>();
+  closeRegistration = output<boolean>();
+
    registerForm = new FormGroup({
     username : new FormControl(),
     password : new FormControl(),
@@ -19,7 +24,14 @@ export class RegisterFormComponent {
    });
 
    register(){
-    //this.accountService.register(this.registerForm.value);
+    this.accountService.register(this.registerForm.value).subscribe({
+      next: result => {
+        console.log(result);
+        this.registered.emit(true);
+        this.close();
+      },
+      error: err=> console.log(err)
+    });
     console.log("Register Button clicked");
    }
    passwordControlFeedBack : any = null ;
@@ -35,5 +47,10 @@ export class RegisterFormComponent {
         this.passwordControlFeedBack = null;
       }
     }
+
+    close(){
+      this.closeRegistration.emit(true);
+    }
+
 
 }
